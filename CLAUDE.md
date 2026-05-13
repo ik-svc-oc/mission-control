@@ -2,6 +2,8 @@
 
 Open-source dashboard for AI agent orchestration. Manage agent fleets, track tasks, monitor costs, and orchestrate workflows.
 
+Read `AGENTS.md` first for local checkout, remote, PR, and worktree rules.
+
 **Stack**: Next.js 16, React 19, TypeScript 5, SQLite (better-sqlite3), Tailwind CSS 3, Zustand, pnpm
 
 ## Prerequisites
