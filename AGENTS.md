@@ -48,3 +48,20 @@ rg -n "mission-control-pr-upstream|mission-control-deploy|mission-control-data|/
 
 Run `bash ~/.codex/hooks/git-hygiene-audit.sh /Users/oc_runtime/Development`
 before creating branches, PRs, worktrees, or cleanup plans.
+
+## Local Service Control
+
+The existing per-user LaunchAgent lives at
+`/Users/oc_runtime/Library/LaunchAgents/com.oc_runtime.mission-control.plist`.
+It is a GUI-session agent. From SSH/background shells where `/dev/console` is a
+different user, `launchctl print gui/$(id -u)` can fail with:
+
+```text
+125: Domain does not support specified action
+```
+
+That means the GUI domain is unavailable from the current shell; it does not
+mean the plist is malformed. For SSH-manageable service control, install the
+root-owned LaunchDaemon template at
+`ops/templates/com.oc_runtime.mission-control.plist` into
+`/Library/LaunchDaemons/` with operator approval.
