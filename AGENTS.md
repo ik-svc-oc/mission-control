@@ -7,7 +7,8 @@ next for project commands and conventions.
 
 - Canonical development checkout: `/Users/oc_runtime/Development/mission-control`.
 - Runtime data directory: `/Users/oc_runtime/Development/mission-control-data`.
-- Deployment clone, if present: `/Users/oc_runtime/Development/mission-control-deploy`.
+- Retired deployment clone archive:
+  `/Users/oc_runtime/Development/worktrees/_archive/mission-control-deploy-retired-20260513-161337`.
 - General worktree root for other projects: `/Users/oc_runtime/Development/worktrees`.
 
 Do not create sibling Mission Control clones such as `mission-control-pr-*` or
@@ -30,9 +31,9 @@ Git worktree under `/Users/oc_runtime/Development/worktrees/` and document why.
   for code edits, tests, and branch work.
 - Treat `mission-control-data` as runtime state, not source code. Do not delete
   or move it during repo cleanup.
-- Treat `mission-control-deploy` as a deployment/runtime clone until scripts and
-  service configuration prove otherwise. Do not delete or rename it just because
-  it duplicates source code.
+- `mission-control-deploy` was archived after tracing LaunchAgent and launcher
+  references back to the canonical checkout. Do not recreate it as a sibling
+  clone; restore the archived copy only if a runtime dependency is discovered.
 - Before removing any checkout or worktree, trace references with `rg` across
   `/Users/oc_runtime/Development` and patch live scripts back to the canonical
   path first.
