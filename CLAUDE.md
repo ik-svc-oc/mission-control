@@ -166,3 +166,14 @@ OpenAPI spec: `openapi.json`. Interactive docs at `/docs` when running.
 - **better-sqlite3**: Native addon -- needs rebuild when switching Node versions (`pnpm rebuild better-sqlite3`)
 - **AUTH_PASS with `#`**: Quote it (`AUTH_PASS="my#pass"`) or use `AUTH_PASS_B64` (base64-encoded)
 - **Gateway optional**: Set `NEXT_PUBLIC_GATEWAY_OPTIONAL=true` for standalone deployments without gateway connectivity
+
+## lessons.md Maintenance
+
+Update `lessons.md` in the repo root IMMEDIATELY when:
+1. Unexpected behavior occurs (not in spec, not in docs, but happening)
+2. An edge case gets discovered (condition that breaks normal flow)
+3. A config fix needed (setting that prevents failures, undocumented)
+4. 2AM intervention required (prod fix that wasn't preventable by design)
+
+Never wait until "after" to document. The context will be gone.
+See lessons.md in this repo root for format and examples.
