@@ -34,6 +34,7 @@ const mockDbState = vi.hoisted(() => ({
   runOpenClaw: vi.fn(),
   getAllGatewaySessions: vi.fn(),
   readSessionJsonl: vi.fn(),
+  gatewayCount: 0,
   logActivity: vi.fn(),
   broadcast: vi.fn(),
   warn: vi.fn(),
@@ -45,6 +46,11 @@ vi.mock('../db', () => ({
       if (sql.includes('SELECT') && sql.includes('assigned_to') && sql.includes('metadata') && sql.includes('project_ticket_no')) {
         return {
           all: () => mockDbState.tasks,
+        }
+      }
+      if (sql.includes('FROM gateways')) {
+        return {
+          get: () => ({ c: mockDbState.gatewayCount }),
         }
       }
       if (sql.includes('FROM tasks t') && sql.includes('JOIN agents')) {
@@ -170,6 +176,7 @@ describe('deferred task completion reconciliation', () => {
     mockDbState.metadataUpdates = []
     mockDbState.callOpenClawGateway.mockReset()
     mockDbState.runOpenClaw.mockReset()
+    mockDbState.gatewayCount = 0
     mockDbState.getAllGatewaySessions.mockReset()
     mockDbState.getAllGatewaySessions.mockReturnValue([])
     mockDbState.readSessionJsonl.mockReset()
@@ -371,6 +378,7 @@ describe('existing-session deferred dispatch', () => {
     mockDbState.metadataUpdates = []
     mockDbState.callOpenClawGateway.mockReset()
     mockDbState.runOpenClaw.mockReset()
+    mockDbState.gatewayCount = 0
     mockDbState.getAllGatewaySessions.mockReset()
     mockDbState.getAllGatewaySessions.mockReturnValue([])
     mockDbState.readSessionJsonl.mockReset()
@@ -440,6 +448,7 @@ describe('existing-session deferred dispatch', () => {
   })
 
   it('does not send heuristic model overrides when the agent has a configured default model', async () => {
+    mockDbState.gatewayCount = 1
     mockDbState.tasks = [{
       id: 22,
       title: 'Diagnose failure in dispatch',

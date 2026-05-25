@@ -14,6 +14,11 @@ describe('verifyGoogleIdToken', () => {
   })
 
   it('rejects unverified emails', async () => {
+    const prevGoogle = process.env.GOOGLE_CLIENT_ID
+    const prevPublic = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+    process.env.GOOGLE_CLIENT_ID = ''
+    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID = ''
+
     vi.stubGlobal('fetch', vi.fn(async () => ({
       ok: true,
       json: async () => ({ aud: 'x', email: 'user@example.com', sub: 'sub', email_verified: false }),
@@ -21,6 +26,8 @@ describe('verifyGoogleIdToken', () => {
 
     await expect(verifyGoogleIdToken('t')).rejects.toThrow(/not verified/i)
     vi.unstubAllGlobals()
+    process.env.GOOGLE_CLIENT_ID = prevGoogle
+    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID = prevPublic
   })
 
   it('rejects audience mismatch when GOOGLE_CLIENT_ID is set', async () => {

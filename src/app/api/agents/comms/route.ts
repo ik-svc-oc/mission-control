@@ -48,8 +48,16 @@ export async function GET(request: NextRequest) {
       messagesParams.push(parseInt(since, 10))
     }
     if (agent) {
-      messagesWhere += " AND (from_agent = ? OR to_agent = ?)"
-      messagesParams.push(agent, agent)
+      messagesWhere += `
+        AND conversation_id IN (
+          SELECT DISTINCT conversation_id
+          FROM messages
+          WHERE workspace_id = ?
+            AND ${commsPredicate}
+            AND (from_agent = ? OR to_agent = ?)
+        )
+      `
+      messagesParams.push(workspaceId, agent, agent)
     }
 
     const messagesQuery = `
@@ -122,8 +130,16 @@ export async function GET(request: NextRequest) {
       countParams.push(parseInt(since, 10))
     }
     if (agent) {
-      countQuery += " AND (from_agent = ? OR to_agent = ?)"
-      countParams.push(agent, agent)
+      countQuery += `
+        AND conversation_id IN (
+          SELECT DISTINCT conversation_id
+          FROM messages
+          WHERE workspace_id = ?
+            AND ${commsPredicate}
+            AND (from_agent = ? OR to_agent = ?)
+        )
+      `
+      countParams.push(workspaceId, agent, agent)
     }
     const { total } = db.prepare(countQuery).get(...countParams) as { total: number }
 
@@ -139,8 +155,16 @@ export async function GET(request: NextRequest) {
       seededParams.push(parseInt(since, 10))
     }
     if (agent) {
-      seededCountQuery += " AND (from_agent = ? OR to_agent = ?)"
-      seededParams.push(agent, agent)
+      seededCountQuery += `
+        AND conversation_id IN (
+          SELECT DISTINCT conversation_id
+          FROM messages
+          WHERE workspace_id = ?
+            AND ${commsPredicate}
+            AND (from_agent = ? OR to_agent = ?)
+        )
+      `
+      seededParams.push(workspaceId, agent, agent)
     }
     const { seeded } = db.prepare(seededCountQuery).get(...seededParams) as { seeded: number }
 

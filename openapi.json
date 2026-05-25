@@ -4497,6 +4497,230 @@
         }
       }
     },
+    "/api/galactus/runs/{run_id}/approval-ledger": {
+      "get": {
+        "tags": ["Monitoring"],
+        "summary": "Get Galactus pending approval ledger bridge snapshot",
+        "operationId": "getGalactusApprovalLedger",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pending approval ledger snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["approvals"],
+                  "properties": {
+                    "approvals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "approval_type": {
+                            "type": "string",
+                            "enum": ["scope", "contract_lock", "deploy", "prod_release"]
+                          },
+                          "required_approver": { "type": "string" },
+                          "pr_url": { "type": "string" },
+                          "waiting_since": { "type": "string", "format": "date-time" },
+                          "gate_predicate_id": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/api/galactus/runs/{run_id}/cost": {
+      "get": {
+        "tags": ["Monitoring"],
+        "summary": "Get Galactus budget and cost bridge snapshot",
+        "operationId": "getGalactusCostSnapshot",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cost snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["total_cost_usd", "budget_usd", "cost_pct", "breakdown", "anomalies"],
+                  "properties": {
+                    "total_cost_usd": { "type": "number" },
+                    "budget_usd": { "type": "number" },
+                    "cost_pct": { "type": "number" },
+                    "breakdown": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "tokens": { "type": "integer" },
+                          "cost_usd": { "type": "number" },
+                          "calls": { "type": "integer" }
+                        }
+                      }
+                    },
+                    "anomalies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "lane_id": { "type": "string" },
+                          "pct_of_total": { "type": "number" },
+                          "severity": { "type": "string", "enum": ["warn", "critical"] }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/api/galactus/runs/{run_id}/evidence": {
+      "get": {
+        "tags": ["Monitoring"],
+        "summary": "Get Galactus evidence ledger bridge snapshot",
+        "operationId": "getGalactusEvidenceLedger",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evidence ledger snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["entries", "scope_epoch"],
+                  "properties": {
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "kind": {
+                            "type": "string",
+                            "enum": ["test_result", "diff", "artifact", "screenshot"]
+                          },
+                          "verification_status": {
+                            "type": "string",
+                            "enum": ["machine_verified", "human_verified", "self_reported"]
+                          },
+                          "storage_ref": { "type": "string" },
+                          "content_hash": { "type": "string" },
+                          "produced_at": { "type": "string", "format": "date-time" },
+                          "scope_epoch": { "type": "integer" },
+                          "payload": { "type": "object" }
+                        }
+                      }
+                    },
+                    "scope_epoch": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/api/galactus/runs/{run_id}/lanes": {
+      "get": {
+        "tags": ["Monitoring"],
+        "summary": "Get Galactus active lanes bridge snapshot",
+        "operationId": "getGalactusLanes",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lane roster snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["lanes", "scope_epoch"],
+                  "properties": {
+                    "lanes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "lane_id": { "type": "string" },
+                          "worktree_id": { "type": "string" },
+                          "role": {
+                            "type": "string",
+                            "enum": ["triager", "author", "reviewer", "orchestrator"]
+                          },
+                          "current_slice_goal": { "type": "string" },
+                          "last_updated": { "type": "string", "format": "date-time" },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "in_progress",
+                              "complete",
+                              "blocked",
+                              "soft_block",
+                              "hard_block",
+                              "needs_operator",
+                              "timed_out",
+                              "abandoned"
+                            ]
+                          },
+                          "model": { "type": "string" }
+                        }
+                      }
+                    },
+                    "scope_epoch": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
     "/api/memory": {
       "get": {
         "tags": [
@@ -4663,6 +4887,133 @@
         "responses": {
           "200": {
             "description": "Mention targets list"
+          }
+        }
+      }
+    },
+    "/api/mem0/search": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Search pending Galactus trajectory candidates",
+        "operationId": "searchGalactusTrajectoryCandidates",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["promoted:false"],
+              "default": "promoted:false"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pending trajectory candidates bridge snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["results", "bridge_snapshot"],
+                  "properties": {
+                    "bridge_snapshot": { "type": "boolean" },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "category": {
+                            "type": "string",
+                            "enum": ["decision", "failure", "pattern", "gotcha"]
+                          },
+                          "description": { "type": "string" },
+                          "supporting_run_ids": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                          },
+                          "recurrence_count": { "type": "integer" },
+                          "suggested_action": {
+                            "type": ["string", "null"]
+                          },
+                          "promoted": { "type": "boolean" },
+                          "rejected": { "type": "boolean" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/api/mem0/{id}": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "Record a Galactus trajectory decision in mem0",
+        "operationId": "recordGalactusTrajectoryDecision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["action"],
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": ["approve", "reject", "defer"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trajectory decision recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["ok", "action", "id", "recorded_at"],
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "action": {
+                      "type": "string",
+                      "enum": ["approve", "reject", "defer"]
+                    },
+                    "id": { "type": "string" },
+                    "recorded_at": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "422": {
+            "description": "Invalid trajectory action"
+          },
+          "501": {
+            "description": "mem0 MCP write is not configured"
           }
         }
       }
@@ -8248,6 +8599,115 @@
           },
           "403": {
             "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}": {
+      "get": {
+        "tags": ["Monitoring"],
+        "summary": "Get an agent run",
+        "operationId": "getAgentRun",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["id", "agent_id", "status", "started_at", "steps", "cost", "provenance"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "agent_id": { "type": "string" },
+                    "agent_name": { "type": ["string", "null"] },
+                    "model": { "type": ["string", "null"] },
+                    "provider": { "type": ["string", "null"] },
+                    "runtime": { "type": ["string", "null"] },
+                    "runtime_version": { "type": ["string", "null"] },
+                    "trigger": {
+                      "type": ["string", "null"],
+                      "enum": ["manual", "cron", "webhook", "agent", "pipeline", "queue", null]
+                    },
+                    "parent_run_id": { "type": ["string", "null"] },
+                    "task_id": { "type": ["string", "null"] },
+                    "status": {
+                      "type": "string",
+                      "enum": ["pending", "running", "completed", "failed", "cancelled", "timeout"]
+                    },
+                    "outcome": {
+                      "type": ["string", "null"],
+                      "enum": ["success", "failed", "partial", "abandoned", null]
+                    },
+                    "started_at": { "type": "string", "format": "date-time" },
+                    "ended_at": { "type": ["string", "null"], "format": "date-time" },
+                    "duration_ms": { "type": ["integer", "null"] },
+                    "steps": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    },
+                    "tools_available": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "cost": {
+                      "type": "object",
+                      "required": ["input_tokens", "output_tokens"],
+                      "properties": {
+                        "input_tokens": { "type": "integer" },
+                        "output_tokens": { "type": "integer" },
+                        "cache_read_tokens": { "type": ["integer", "null"] },
+                        "cache_write_tokens": { "type": ["integer", "null"] },
+                        "total_tokens": { "type": ["integer", "null"] },
+                        "cost_usd": { "type": ["number", "null"] },
+                        "model": { "type": ["string", "null"] }
+                      }
+                    },
+                    "provenance": {
+                      "type": "object",
+                      "required": ["run_hash"],
+                      "properties": {
+                        "run_hash": { "type": "string" },
+                        "parent_run_hash": { "type": ["string", "null"] },
+                        "lineage": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "model_version": { "type": "string" },
+                        "config_hash": { "type": "string" },
+                        "runtime": { "type": "string" },
+                        "signed_by": { "type": ["string", "null"] },
+                        "signature": { "type": ["string", "null"] },
+                        "created_at": { "type": "string", "format": "date-time" }
+                      }
+                    },
+                    "eval": { "type": ["object", "null"] },
+                    "error": { "type": ["string", "null"] },
+                    "git_branch": { "type": ["string", "null"] },
+                    "git_commit": { "type": ["string", "null"] },
+                    "workspace_id": { "type": ["string", "null"] },
+                    "tags": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "metadata": { "type": "object" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
