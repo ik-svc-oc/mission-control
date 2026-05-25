@@ -1,3 +1,66 @@
+# Karpathy Coding Rules (you-kol adaptation)
+
+<!-- begin karpathy-rules -->
+
+## Karpathy Coding Rules
+
+These rules address the most common LLM coding failure modes. They apply to
+every session in this repo. No exceptions.
+
+### Rule 1 — Think Before Coding
+
+Before writing any code, state your assumptions explicitly. If the goal is
+ambiguous, ask for clarifications. Surface tradeoffs to the operator before
+starting. Do not begin implementing until the goal is falsifiable — "make it
+work" is not a goal, "the function must return X when given Y" is a goal.
+
+### Rule 2 — Simplicity First
+
+Write the minimum code that achieves the goal. Do not add abstractions,
+utilities, wrappers, or patterns that were not explicitly requested. Prefer
+simple functions over clever classes. Prefer direct logic over indirection.
+A solution that does exactly what was asked in 20 lines beats a "flexible"
+framework in 200 lines.
+
+### Rule 3 — Surgical Changes
+
+Only touch the code paths necessary for the requested change. Match the
+existing style, naming conventions, and file structure. Do not refactor
+adjacent code unless explicitly asked. Do not rename variables, reformat
+sections, or "clean up" things you weren't asked to touch. Do not translate
+or modify pre-existing non-English (e.g., Chinese) comments — leave them
+exactly as they are.
+
+### Rule 4 — Goal-Driven
+
+Convert vague goals into verifiable criteria before coding. Restate the goal
+as a falsifiable assertion and confirm with the operator before proceeding.
+
+- Vague: "Make it better"
+- Goal: "The endpoint must return HTTP 200 with `{ok: true}` when the input is valid"
+
+If the goal cannot be verified by a test, a grep, or a manual step, it is not
+a goal yet.
+
+### Rule 5 — Conventional Commits, No AI Attribution
+
+Use conventional commit format for all commits:
+`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`
+
+Never add `Co-Authored-By`, `Generated-By`, or AI attribution trailers to
+commits. No emojis in code, commit messages, or PR descriptions unless
+explicitly requested by the operator.
+
+---
+
+Reported baseline: applying these rules improved task completion accuracy from
+~65% to ~94% across agentic coding sessions. Source: Karpathy / multica-ai
+adaptation for you-kol repos.
+
+<!-- end karpathy-rules -->
+
+---
+
 # Mission Control
 
 Open-source dashboard for AI agent orchestration. Manage agent fleets, track tasks, monitor costs, and orchestrate workflows.
@@ -103,3 +166,14 @@ OpenAPI spec: `openapi.json`. Interactive docs at `/docs` when running.
 - **better-sqlite3**: Native addon -- needs rebuild when switching Node versions (`pnpm rebuild better-sqlite3`)
 - **AUTH_PASS with `#`**: Quote it (`AUTH_PASS="my#pass"`) or use `AUTH_PASS_B64` (base64-encoded)
 - **Gateway optional**: Set `NEXT_PUBLIC_GATEWAY_OPTIONAL=true` for standalone deployments without gateway connectivity
+
+## lessons.md Maintenance
+
+Update `lessons.md` in the repo root IMMEDIATELY when:
+1. Unexpected behavior occurs (not in spec, not in docs, but happening)
+2. An edge case gets discovered (condition that breaks normal flow)
+3. A config fix needed (setting that prevents failures, undocumented)
+4. 2AM intervention required (prod fix that wasn't preventable by design)
+
+Never wait until "after" to document. The context will be gone.
+See lessons.md in this repo root for format and examples.
