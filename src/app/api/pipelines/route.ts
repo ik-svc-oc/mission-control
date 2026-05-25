@@ -186,15 +186,21 @@ export async function DELETE(request: NextRequest) {
   try {
     const db = getDatabase()
     const workspaceId = auth.user.workspace_id ?? 1
-    // Accept ID from query string (?id=1) or request body ({id: 1})
-    const url = new URL(request.url)
-    const queryId = url.searchParams.get('id')
-    let bodyId: string | undefined
-    try { const body: any = await request.json(); bodyId = body?.id } catch { /* no body is fine */ }
-    const id = queryId ?? bodyId
+    const rawBody = await request.text()
+    if (!rawBody.trim()) {
+      return NextResponse.json({ error: 'Request body required' }, { status: 400 })
+    }
+
+    let body: { id?: string | number }
+    try {
+      body = JSON.parse(rawBody)
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+    }
+    const id = body?.id
     if (!id) return NextResponse.json({ error: 'Pipeline ID required' }, { status: 400 })
 
-    db.prepare('DELETE FROM workflow_pipelines WHERE id = ? AND workspace_id = ?').run(parseInt(id), workspaceId)
+    db.prepare('DELETE FROM workflow_pipelines WHERE id = ? AND workspace_id = ?').run(parseInt(String(id)), workspaceId)
     return NextResponse.json({ success: true })
   } catch (error) {
     logger.error({ err: error }, 'DELETE /api/pipelines error')

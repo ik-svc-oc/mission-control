@@ -131,14 +131,12 @@ function dedupeTokenRecords(records: TokenUsageRecord[]): TokenUsageRecord[] {
     const key = [
       record.sessionId,
       record.model,
-      record.timestamp,
+      Math.floor(record.timestamp / 1000),
       record.inputTokens,
       record.outputTokens,
       record.totalTokens,
-      record.operation,
       record.taskId ?? '',
       record.workspaceId ?? 1,
-      record.duration ?? '',
     ].join('|')
     if (seen.has(key)) continue
     seen.add(key)
@@ -178,7 +176,7 @@ async function loadTokenData(workspaceId: number): Promise<TokenUsageRecord[]> {
   const dbRecords = loadTokenDataFromDb(workspaceId, providerSubscriptions)
   const fileRecords = await loadTokenDataFromFile(workspaceId, providerSubscriptions)
   const sessionRecords = deriveFromSessions(workspaceId, providerSubscriptions)
-  return dedupeTokenRecords([...dbRecords, ...fileRecords, ...sessionRecords])
+  return dedupeTokenRecords([...fileRecords, ...dbRecords, ...sessionRecords])
     .sort((a, b) => b.timestamp - a.timestamp)
 }
 

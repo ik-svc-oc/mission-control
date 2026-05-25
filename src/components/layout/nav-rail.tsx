@@ -45,6 +45,7 @@ const navGroups: NavGroup[] = [
       { id: 'activity', label: 'Activity', icon: <ActivityIcon />, priority: true, essential: true },
       { id: 'logs', label: 'Logs', icon: <LogsIcon />, priority: false, essential: true },
       { id: 'cost-tracker', label: 'Cost Tracker', icon: <TokensIcon />, priority: false },
+      { id: 'galactus', label: 'Galactus', icon: <GalactusIcon />, priority: false },
       { id: 'nodes', label: 'Nodes', icon: <NodesIcon />, priority: false },
       { id: 'exec-approvals', label: 'Approvals', icon: <ApprovalsIcon />, priority: false },
       { id: 'office', label: 'Office', icon: <OfficeIcon />, priority: false },
@@ -1323,6 +1324,17 @@ function TokensIcon() {
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="8" cy="8" r="6.5" />
       <path d="M8 4v8M5.5 6h5a1.5 1.5 0 010 3H6" />
+    </svg>
+  )
+}
+
+function GalactusIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 1.5v13" />
+      <path d="M2 8h12" />
+      <circle cx="8" cy="8" r="5.5" />
+      <path d="M4.5 4.5c2 1.6 5 1.6 7 0M4.5 11.5c2-1.6 5-1.6 7 0" />
     </svg>
   )
 }
